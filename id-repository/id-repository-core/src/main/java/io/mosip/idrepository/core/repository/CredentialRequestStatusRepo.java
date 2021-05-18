@@ -1,7 +1,6 @@
 package io.mosip.idrepository.core.repository;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -22,27 +21,17 @@ import io.mosip.idrepository.core.entity.CredentialRequestStatus;
 @ConditionalOnBean(name = { "idRepoDataSource" })
 public interface CredentialRequestStatusRepo extends JpaRepository<CredentialRequestStatus, String> {
 
-	List<CredentialRequestStatus> findByIndividualIdAndIsDeleted(String individualId, boolean isDeleted);
+	Optional<CredentialRequestStatus> findByIndividualIdAndIsDeleted(String individualId, boolean isDeleted);
 
-	default List<CredentialRequestStatus> findByIndividualId(String individualId) {
+	default Optional<CredentialRequestStatus> findByIndividualId(String individualId) {
 		return this.findByIndividualIdAndIsDeleted(individualId, false);
 	}
 
-	List<CredentialRequestStatus> findByIndividualIdHashAndIsDeleted(String individualIdHash, boolean isDeleted);
+	Optional<CredentialRequestStatus> findByIndividualIdHashAndIsDeleted(String idHash, boolean isDeleted);
 
-	default List<CredentialRequestStatus> findByIndividualIdHash(String individualIdHash) {
-		return this.findByIndividualIdAndIsDeleted(individualIdHash, false);
+	default Optional<CredentialRequestStatus> findByIndividualIdHash(String individualIdHash) {
+		return this.findByIndividualIdHashAndIsDeleted(individualIdHash, false);
 	}
-
-	Optional<CredentialRequestStatus> findByIndividualIdHashAndPartnerIdAndIsDeleted(String idHash, String partnerId, boolean isDeleted);
-
-	default Optional<CredentialRequestStatus> findByIndividualIdHashAndPartnerId(String individualIdHash, String partnerId) {
-		return this.findByIndividualIdHashAndPartnerIdAndIsDeleted(individualIdHash, partnerId, false);
-	}
-	
-	List<CredentialRequestStatus> findByStatus(String status);
-	
-	List<CredentialRequestStatus> findByIdExpiryTimestampBefore(LocalDateTime idExpiryTimestamp);
 	
 	@Query(value = "SELECT new CredentialRequestStatus( individualId, idExpiryTimestamp, idTransactionLimit, tokenId, partnerId ) "
 			+ "FROM CredentialRequestStatus crs "

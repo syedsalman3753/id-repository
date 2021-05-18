@@ -1,7 +1,6 @@
 package io.mosip.idrepository.vid.interceptor;
 
 import static io.mosip.idrepository.core.constant.IdRepoConstants.SPLITTER;
-import static io.mosip.idrepository.core.constant.IdRepoConstants.UIN_REFID;
 import static io.mosip.idrepository.core.constant.IdRepoErrorConstants.ENCRYPTION_DECRYPTION_FAILED;
 
 import java.io.Serializable;
@@ -31,7 +30,7 @@ import io.mosip.kernel.core.util.CryptoUtil;
 @Component
 public class IdRepoVidEntityInterceptor extends EmptyInterceptor {
 	
-	@Value("${" + UIN_REFID + "}")
+	@Value("${mosip.idrepo.crypto.refId.uin}")
 	private String uinRefId;
 
 	/** The Constant ID_REPO_ENTITY_INTERCEPTOR. */

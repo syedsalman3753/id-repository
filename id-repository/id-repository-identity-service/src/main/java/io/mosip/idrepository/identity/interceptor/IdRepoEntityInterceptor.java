@@ -1,8 +1,6 @@
 package io.mosip.idrepository.identity.interceptor;
 
 import static io.mosip.idrepository.core.constant.IdRepoConstants.SPLITTER;
-import static io.mosip.idrepository.core.constant.IdRepoConstants.UIN_DATA_REFID;
-import static io.mosip.idrepository.core.constant.IdRepoConstants.UIN_REFID;
 import static io.mosip.idrepository.core.constant.IdRepoErrorConstants.ENCRYPTION_DECRYPTION_FAILED;
 import static io.mosip.idrepository.core.constant.IdRepoErrorConstants.IDENTITY_HASH_MISMATCH;
 
@@ -35,10 +33,10 @@ import io.mosip.kernel.core.util.CryptoUtil;
 @Component
 public class IdRepoEntityInterceptor extends EmptyInterceptor {
 	
-	@Value("${" + UIN_REFID + "}")
+	@Value("${mosip.idrepo.crypto.refId.uin}")
 	private String uinRefId;
 	
-	@Value("${" + UIN_DATA_REFID + "}")
+	@Value("${mosip.idrepo.crypto.refId.uin-data}")
 	private String uinDataRefId;
 
 	/** The Constant ID_REPO_ENTITY_INTERCEPTOR. */

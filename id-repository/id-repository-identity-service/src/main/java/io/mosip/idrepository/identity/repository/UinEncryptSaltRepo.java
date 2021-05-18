@@ -1,10 +1,10 @@
-package io.mosip.idrepository.core.repository;
+package io.mosip.idrepository.identity.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import io.mosip.idrepository.core.entity.UinEncryptSalt;
+import io.mosip.idrepository.identity.entity.UinEncryptSalt;
 
 /**
  * The Interface UinEncryptSaltRepo.

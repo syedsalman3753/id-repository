@@ -4,10 +4,8 @@ import static io.mosip.idrepository.core.constant.IdRepoConstants.ACTIVE_STATUS;
 import static io.mosip.idrepository.core.constant.IdRepoConstants.APPLICATION_VERSION_VID;
 import static io.mosip.idrepository.core.constant.IdRepoConstants.MODULO_VALUE;
 import static io.mosip.idrepository.core.constant.IdRepoConstants.SPLITTER;
-import static io.mosip.idrepository.core.constant.IdRepoConstants.UIN_REFID;
 import static io.mosip.idrepository.core.constant.IdRepoConstants.VID_ACTIVE_STATUS;
 import static io.mosip.idrepository.core.constant.IdRepoConstants.VID_DEACTIVATED;
-import static io.mosip.idrepository.core.constant.IdRepoConstants.VID_EVENT_TOPIC;
 import static io.mosip.idrepository.core.constant.IdRepoConstants.VID_REGENERATE_ACTIVE_STATUS;
 import static io.mosip.idrepository.core.constant.IdRepoConstants.VID_REGENERATE_ALLOWED_STATUS;
 import static io.mosip.idrepository.core.constant.IdRepoConstants.VID_UNLIMITED_TRANSACTION_STATUS;
@@ -57,7 +55,6 @@ import io.mosip.idrepository.core.exception.IdRepoAppException;
 import io.mosip.idrepository.core.exception.IdRepoAppUncheckedException;
 import io.mosip.idrepository.core.exception.IdRepoDataValidationException;
 import io.mosip.idrepository.core.exception.RestServiceException;
-import io.mosip.idrepository.core.helper.IdRepoWebSubHelper;
 import io.mosip.idrepository.core.helper.RestHelper;
 import io.mosip.idrepository.core.logger.IdRepoLogger;
 import io.mosip.idrepository.core.manager.CredentialServiceManager;
@@ -75,7 +72,6 @@ import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.kernel.core.util.CryptoUtil;
 import io.mosip.kernel.core.util.DateUtils;
 import io.mosip.kernel.core.util.UUIDUtils;
-import io.mosip.kernel.core.websub.model.Event;
 import io.mosip.kernel.core.websub.model.EventModel;
 
 /**
@@ -118,11 +114,8 @@ public class VidServiceImpl implements VidService<VidRequestDTO, ResponseWrapper
 	/** The Constant ID_REPO_VID_SERVICE. */
 	private static final String ID_REPO_VID_SERVICE = "VidService";
 	
-	@Value("${" + UIN_REFID + "}")
+	@Value("${mosip.idrepo.crypto.refId.uin}")
 	private String uinRefId;
-	
-	@Value("${" + VID_EVENT_TOPIC + "}")
-	private String vidEventTopic;
 
 	/** The env. */
 	@Autowired
@@ -162,10 +155,7 @@ public class VidServiceImpl implements VidService<VidRequestDTO, ResponseWrapper
 	
 	@Autowired
 	private CredentialServiceManager credentialServiceManager;
-	
-	@Autowired
-	private IdRepoWebSubHelper websubHelper;
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -573,7 +563,7 @@ public class VidServiceImpl implements VidService<VidRequestDTO, ResponseWrapper
 			if (idType.contentEquals(DEACTIVATE)) {
 				notify(uin, status, vidInfos, true);
 			} else {
-				notify(uin, status, vidInfos, false);
+				notify(uin, status, vidInfos, true);
 			}
 			VidResponseDTO response = new VidResponseDTO();
 			response.setVidStatus(status);
@@ -703,30 +693,17 @@ public class VidServiceImpl implements VidService<VidRequestDTO, ResponseWrapper
 	
 	@Transactional(propagation = Propagation.NEVER)
 	private void notify(String uin, String status, List<VidInfoDTO> vids, boolean isUpdated) {
-		credentialServiceManager.notifyVIDCredential(uin, status, vids, isUpdated, uinHashSaltRepo::retrieveSaltById, this::credentialRequestResponseHandler, this::idaEventHandler);
+		credentialServiceManager.notifyVIDCredential(uin, status, vids, isUpdated, uinHashSaltRepo::retrieveSaltById,
+				this::processCredentialRequestResponse, this::processIDAEventModel);
 	}
 	
-	public void credentialRequestResponseHandler(CredentialIssueRequestWrapperDto request, Map<String, Object> response) {
-		EventModel eventModel = new EventModel();
-		eventModel.setTopic(vidEventTopic);
-		Event event = new Event();
-		event.setData(Map.of(
-				"status", env.getProperty(VID_ACTIVE_STATUS),
-				"request", request, 
-				"response", response));
-		eventModel.setEvent(event);
-		websubHelper.publishEvent(eventModel);
+	private void processCredentialRequestResponse(CredentialIssueRequestWrapperDto credentialRequestResponseConsumer, Map<String, Object> response) {
+		// TODO Auto-generated method stub
 	}
 	
-	public void idaEventHandler(EventModel idaEvent) {
-		EventModel eventModel = new EventModel();
-		eventModel.setTopic(vidEventTopic);
-		Event event = new Event();
-		event.setData(Map.of(
-				"status", "REVOKED",
-				"idaEvent", idaEvent
-				));
-		eventModel.setEvent(event);
-		websubHelper.publishEvent(eventModel);
+	private void processIDAEventModel(EventModel idaEventModel) {
+		// TODO Auto-generated method stub
 	}
+	
+	
 }

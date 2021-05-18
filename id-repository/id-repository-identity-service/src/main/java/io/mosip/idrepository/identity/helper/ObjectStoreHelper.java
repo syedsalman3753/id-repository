@@ -1,7 +1,5 @@
 package io.mosip.idrepository.identity.helper;
 
-import static io.mosip.idrepository.core.constant.IdRepoConstants.BIO_DATA_REFID;
-import static io.mosip.idrepository.core.constant.IdRepoConstants.DEMO_DATA_REFID;
 import static io.mosip.idrepository.core.constant.IdRepoConstants.OBJECT_STORE_ACCOUNT_NAME;
 import static io.mosip.idrepository.core.constant.IdRepoConstants.OBJECT_STORE_ADAPTER_NAME;
 import static io.mosip.idrepository.core.constant.IdRepoConstants.OBJECT_STORE_BUCKET_NAME;
@@ -26,10 +24,10 @@ import io.mosip.idrepository.core.security.IdRepoSecurityManager;
 @Component
 public class ObjectStoreHelper {
 	
-	@Value("${" + BIO_DATA_REFID + "}")
+	@Value("${mosip.idrepo.crypto.refId.bio-doc-data}")
 	private String bioDataRefId;
 	
-	@Value("${" + DEMO_DATA_REFID + "}")
+	@Value("${mosip.idrepo.crypto.refId.demo-doc-data}")
 	private String demoDataRefId;
 
 	/** The Constant SLASH. */
